@@ -47,12 +47,12 @@ export function useQuiz(questionsCount: number = 10) {
 
     await submitAnswer(currentQuestion.character.id, correct);
 
-    setAnswers([...answers, correct]);
+    setAnswers((prev) => [...prev, correct]);
     setLastAnswerCorrect(correct);
     setShowResult(true);
 
     if (correct) {
-      setScore(score + 1);
+      setScore((s) => s + 1);
     }
   }
 
@@ -61,7 +61,7 @@ export function useQuiz(questionsCount: number = 10) {
     setLastAnswerCorrect(null);
 
     if (currentIndex < questions.length - 1) {
-      setCurrentIndex(currentIndex + 1);
+      setCurrentIndex((i) => i + 1);
     }
   }
 

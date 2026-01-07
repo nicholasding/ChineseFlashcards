@@ -36,12 +36,17 @@ export function HomePage() {
   }
 
   const startQuiz = () => {
-    window.location.href = '/quiz';
+    navigate('/quiz');
   };
 
   const viewProgress = () => {
-    window.location.href = '/progress';
+    navigate('/progress');
   };
+
+  function navigate(path: string) {
+    window.history.pushState({}, '', path);
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  }
 
   if (loading) {
     return (
@@ -54,6 +59,14 @@ export function HomePage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white py-12 px-4">
       <div className="max-w-4xl mx-auto">
+        <div className="flex justify-end mb-4">
+          <a
+            href="/dev-edit"
+            className="px-3 py-2 bg-yellow-400 text-white rounded-lg hover:bg-yellow-500 text-sm"
+          >
+            dev edit
+          </a>
+        </div>
         <div className="text-center mb-12">
           <h1 className="text-5xl font-bold text-gray-800 mb-4">
             Chinese Flashcards

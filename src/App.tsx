@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react';
 import { HomePage } from './pages/HomePage';
 import { QuizPage } from './pages/QuizPage';
 import { ProgressPage } from './pages/ProgressPage';
+import { DevEditPage } from './pages/DevEditPage';
 import { seedDatabase } from './db/seed';
 
-type Route = 'home' | 'quiz' | 'progress';
+type Route = 'home' | 'quiz' | 'progress' | 'dev-edit';
 
 function App() {
   const [currentRoute, setCurrentRoute] = useState<Route>('home');
@@ -33,6 +34,8 @@ function App() {
       setCurrentRoute('quiz');
     } else if (path === '/progress') {
       setCurrentRoute('progress');
+    } else if (path === '/dev-edit') {
+      setCurrentRoute('dev-edit');
     } else {
       setCurrentRoute('home');
       // Increment key to force HomePage to remount and reload stats
@@ -43,15 +46,30 @@ function App() {
   useEffect(() => {
     const handleLinkClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      if (target.tagName === 'A' || target.closest('a')) {
-        e.preventDefault();
-        const href = (target as HTMLAnchorElement).href || (target.closest('a') as HTMLAnchorElement)?.href;
-        if (href) {
-          const url = new URL(href);
-          window.history.pushState({}, '', url.pathname);
-          handleRouting();
-        }
+      const anchor =
+        target.tagName === 'A'
+          ? (target as HTMLAnchorElement)
+          : (target.closest('a') as HTMLAnchorElement | null);
+
+      if (!anchor) return;
+
+      const hrefAttr = anchor.getAttribute('href');
+      if (!hrefAttr) return;
+
+      // Allow external links, mailto:, and links opening in new tab
+      try {
+        const url = new URL(anchor.href, window.location.origin);
+        if (url.origin !== window.location.origin) return;
+      } catch (err) {
+        // If URL constructor fails, skip handling
+        return;
       }
+
+      if (anchor.target === '_blank') return;
+
+      e.preventDefault();
+      window.history.pushState({}, '', hrefAttr);
+      handleRouting();
     };
 
     document.addEventListener('click', handleLinkClick);
@@ -71,6 +89,7 @@ function App() {
       {currentRoute === 'home' && <HomePage key={navigationKey} />}
       {currentRoute === 'quiz' && <QuizPage />}
       {currentRoute === 'progress' && <ProgressPage />}
+      {currentRoute === 'dev-edit' && <DevEditPage />}
     </>
   );
 }

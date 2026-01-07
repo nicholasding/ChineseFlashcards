@@ -33,7 +33,10 @@ export function QuizPage() {
             No characters available for review
           </div>
           <button
-            onClick={() => (window.location.href = '/')}
+            onClick={() => {
+              window.history.pushState({}, '', '/');
+              window.dispatchEvent(new PopStateEvent('popstate'));
+            }}
             className="px-6 py-3 bg-blue-500 text-white rounded-xl hover:bg-blue-600"
           >
             Go Home
@@ -51,7 +54,8 @@ export function QuizPage() {
   const handleNext = () => {
     setSelectedAnswer('');
     if (isComplete) {
-      window.location.href = '/';
+      window.history.pushState({}, '', '/');
+      window.dispatchEvent(new PopStateEvent('popstate'));
     } else {
       nextQuestion();
     }
